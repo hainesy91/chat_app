@@ -12,3 +12,27 @@ app.use(express.static(__dirname + '/public'));
 app.get('/', function(req, res){
  res.render('index')
 });
+
+app.use('/static', express.static(__dirname + '/public'));
+
+var io = require('socket.io').listen(server);
+
+io.sockets.on('connection', function(socket) {
+    socket.emit('connected');
+});
+
+io.sockets.on('chat', function(data) {
+  socket.broadcast.emit('chat', data);
+});
+
+io.sockets.on('chat', function(data) {
+    writeLine(data.name, data.line);
+});
+
+io.sockets.on('action', function(data) {
+  writeAction(data.name, data.action);
+});
+
+io.sockets.on('action', function(data) {
+  socket.broadcast.emit('action', data);
+});
